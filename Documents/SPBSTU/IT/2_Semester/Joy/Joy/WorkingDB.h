@@ -7,6 +7,8 @@
 #include <locale.h>
 #include <iostream>
 #include <vector>
+#include <windows.h>
+
 
 struct dataTarifs
 {

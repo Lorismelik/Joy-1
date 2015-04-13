@@ -21,10 +21,11 @@ int callback(void *data, int argc, char **argv, char **azColName)
 {
 	int i = 0;
 	callbackData* tmpdb = (callbackData*) data;
+	char* tmple;
 	for (i; i < argc; i++)
     {
-		data = argv[i];
-		tmpdb->values.push_back((char *)data);
+		tmple = argv[i];
+		tmpdb->values.push_back(tmple);
 	}
 	return 0;
 }
@@ -33,14 +34,15 @@ std::vector<std::string> WorkingDB::ReadDB(char* sqlcmd)
 {
 	char *zErrMsg = 0;
 	int rc;
-	callbackData* data;
-	rc = sqlite3_exec(db, sqlcmd, callback, (void*)&data, &zErrMsg);
+	callbackData data;
+	char* sql = sqlcmd;
+	rc = sqlite3_exec(db, sql, callback, (void*)&data, &zErrMsg);
 	if (rc != SQLITE_OK)
 	{
 		fprintf(stderr, "SQL error: %s\n", zErrMsg);
 		sqlite3_free(zErrMsg);
 	}
-	return data->values;
+	return data.values;
 }
 int WorkingDB::countTable()
 {
