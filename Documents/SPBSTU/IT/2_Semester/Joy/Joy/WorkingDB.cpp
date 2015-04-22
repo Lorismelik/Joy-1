@@ -12,7 +12,7 @@ WorkingDB::WorkingDB(char* nameBD)
 	rc = sqlite3_open(nameBD, &db);
 	if (rc)
 	{
-		fprintf(stderr, "Невозможно открыть базу данных: %s\n", sqlite3_errmsg(db));
+		fprintf(stderr, "РќРµРІРѕР·РјРѕР¶РЅРѕ РѕС‚РєСЂС‹С‚СЊ Р±Р°Р·Сѓ РґР°РЅРЅС‹С…: %s\n", sqlite3_errmsg(db));
 		std::terminate();
 	}
 }
