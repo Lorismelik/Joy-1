@@ -40,4 +40,3 @@ public:
 private:
 	sqlite3 *db;
 };
-
