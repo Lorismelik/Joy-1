@@ -7,16 +7,17 @@
 class searchTarifs
 {
 public:
-	searchTarifs(int cashtmp, int callstmp, int minstmp, int wherevertmp);
-	BetterTarif CheckAbonPay(int i, std::vector<dataTarifs> tarifoper);
-	dataTarifs SearchBest();
+	searchTarifs(int callstmp, int minstmp, int wherevertmp);
+	BetterTarif CheckAbonPay(int orderTarif, std::vector<dataTarifs> tarifoper);
+	std::vector<BetterTarif> formSearchBest(std::vector<dataTarifs> oper, std::vector<BetterTarif> ArrBestTarif);
+	friend void loading();
+	std::vector<dataTarifs> SearchBest();
 	void SearchGood();
-	~searchTarifs();
-private:
-	int mininhmrg, mininan, minouthmrg, minoutan, tmpcash;
-	BetterTarif bestofthebest;
-	std::vector<dataTarifs> megafon, mts, beeline, tele2;
-	std::vector<BetterTarif> ArrGoodTarif;
-	std::string bestoper;
-};
+	void writeRates(int count);
+   ~searchTarifs();
 
+private:
+	int mininhmrg, mininan, minouthmrg, minoutan;
+	std::vector<dataTarifs> megafon, mts, beeline, tele2;
+	std::vector<BetterTarif> ArrRates;
+};
