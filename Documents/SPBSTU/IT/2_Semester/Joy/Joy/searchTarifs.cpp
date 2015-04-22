@@ -1,137 +1,72 @@
 #include "searchTarifs.h"
 
-
-searchTarifs::searchTarifs(int cashtmp, int callstmp, int minstmp, int wherevertmp)
+searchTarifs::searchTarifs(int callstmp, int minstmp, int wherevertmp)
 {
-	tmpcash = cashtmp;
-	wherevertmp /= 10;
 	int allminsmonth = minstmp * callstmp * 30;
 	mininhmrg = 0; mininan = 0; minouthmrg = 0; minoutan = 0;
-	switch ((int)wherevertmp / 100)
+	if (wherevertmp == 2)
 	{
-	case 1:
-		mininhmrg = (int)(mininhmrg + 0.5 * allminsmonth);
-		break;
-	case 2:
-		mininan = (int)(mininan + 0.5 * allminsmonth);
-		break;
-	case 3:
-		minouthmrg = (int)(minouthmrg + 0.5 * allminsmonth);
-		break;
-	case 4:
-		minoutan = (int)(minoutan + 0.5 * allminsmonth);
-		break;
+		mininhmrg = (int)(0.1*allminsmonth);
+		mininan = (int)(0.4*allminsmonth);
+		minouthmrg = (int)(0.1*allminsmonth);
+		minoutan = (int)(0.4*allminsmonth);
+	
 	}
-	switch ((int)wherevertmp / 10 - (int)wherevertmp / 100 * 10)
+	else
 	{
-	case 1:
-		mininhmrg = (int)(mininhmrg + 0.335 * allminsmonth);
-		break;
-	case 2:
-		mininan = (int)(mininan + 0.335 * allminsmonth);
-		break;
-	case 3:
-		minouthmrg = (int)(minouthmrg + 0.335 * allminsmonth);
-		break;
-	case 4:
-		minoutan = (int)(minoutan + 0.335 * allminsmonth);
-		break;
-	}
-	switch ((int)wherevertmp - (int)wherevertmp / 10 * 10)
-	{
-	case 1:
-		mininhmrg = (int)(mininhmrg + 0.165 * allminsmonth);
-		break;
-	case 2:
-		mininan = (int)(mininan + 0.165 * allminsmonth);
-		break;
-	case 3:
-		minouthmrg = (int)(minouthmrg + 0.165 * allminsmonth);
-		break;
-	case 4:
-		minoutan = (int)(minoutan + 0.165 * allminsmonth);
-		break;
-	}
+		mininhmrg= (int)(0.35*allminsmonth);
+		mininan = (int)(0.15*allminsmonth);
+		minouthmrg = (int)(0.35*allminsmonth);
+		minoutan = (int)(0.15*allminsmonth);
+	}	
 	WorkingDB megafondb("megafon.dblite");
-	megafon.resize(megafondb.countTable());
-	megafon[0].count = megafondb.countTable();
-	for (int i = 0; i < megafon[0].count; i++)
-	{
-		megafon[i].price.resize(4);
-		megafon[i].abonpaymin.resize(3);
-		megafon[i].nameTarif = megafondb.ReadDB("SELECT TARIF FROM NAME")[i];
-		std::string s;
-		s = megafondb.ReadDB("SELECT INHMRG FROM RUSSIA")[i];
-		megafon[i].price[0] = 0.75;
-		megafon[i].price[1] = 0.75;
-		megafon[i].price[2] = 0.75;
-		std::cout << megafondb.ReadDB("SELECT INHMRG FROM RUSSIA")[i] << "\n" << (float)atof(megafondb.ReadDB("SELECT INHMRG FROM RUSSIA")[i].c_str()) << std::endl;
-		megafon[i].price[3] = 0.75;
-		megafon[i].abonpaymin[0] = stoi(megafondb.ReadDB("SELECT ABPAY FROM RUSSIA")[i]);
-		megafon[i].abonpaymin[1] = stoi(megafondb.ReadDB("SELECT MINSAB FROM RUSSIA")[i]);
-		megafon[i].abonpaymin[2] = stoi(megafondb.ReadDB("SELECT FROMAB FROM RUSSIA")[i]);
-	}
+	megafon = megafondb.getDataTarifs("Megafon");
 	megafondb.~WorkingDB();
 	WorkingDB beelinedb("beeline.dblite");
-	beeline.resize(beelinedb.countTable());
-	beeline[0].count = beelinedb.countTable();
-	for (int i = 0; i < beeline[0].count; i++)
-	{
-		beeline[i].price.resize(4);
-		beeline[i].abonpaymin.resize(3);
-		beeline[i].nameTarif = beelinedb.ReadDB("SELECT TARIF FROM NAME")[i];
-		beeline[i].price[0] = 0.75;
-		beeline[i].price[1] = 0.75;
-		beeline[i].price[2] = 0.75;
-		beeline[i].price[3] = 0.75;
-		beeline[i].abonpaymin[0] = stoi(beelinedb.ReadDB("SELECT ABPAY FROM RUSSIA")[i]);
-		beeline[i].abonpaymin[1] = stoi(beelinedb.ReadDB("SELECT MINSAB FROM RUSSIA")[i]);
-		beeline[i].abonpaymin[2] = stoi(beelinedb.ReadDB("SELECT FROMAB FROM RUSSIA")[i]);
-	}
+	beeline = beelinedb.getDataTarifs("Beeline");
 	beelinedb.~WorkingDB();
 	WorkingDB mtsdb("mts.dblite");
-	mts.resize(mtsdb.countTable());
-	mts[0].count = mtsdb.countTable();
-	for (int i = 0; i < mts[0].count; i++)
-	{
-		mts[i].price.resize(4);
-		mts[i].abonpaymin.resize(3);
-		mts[i].nameTarif = mtsdb.ReadDB("SELECT TARIF FROM NAME")[i];
-		mts[i].price[0] = 0.75;
-		mts[i].price[1] = 0.75;
-		mts[i].price[2] = 0.75;
-		mts[i].price[3] = 0.75;
-		mts[i].abonpaymin[0] = stoi(mtsdb.ReadDB("SELECT ABPAY FROM RUSSIA")[i]);
-		mts[i].abonpaymin[1] = stoi(mtsdb.ReadDB("SELECT MINSAB FROM RUSSIA")[i]);
-		mts[i].abonpaymin[2] = stoi(mtsdb.ReadDB("SELECT FROMAB FROM RUSSIA")[i]);
-	}
+	mts = mtsdb.getDataTarifs("Mts");
 	mtsdb.~WorkingDB();
 	WorkingDB tele2db("tele2.dblite");
-	tele2.resize(tele2db.countTable());
-	tele2[0].count = tele2db.countTable();
-	for (int i = 0; i < tele2[0].count; i++)
-	{
-		tele2[i].price.resize(4);
-		tele2[i].abonpaymin.resize(3);
-		tele2[i].nameTarif = tele2db.ReadDB("SELECT TARIF FROM NAME")[i];
-		tele2[i].price[0] = 0.75;
-		tele2[i].price[1] = 0.75;
-		tele2[i].price[2] = 0.75;
-		tele2[i].price[3] = 0.75;
-		tele2[i].abonpaymin[0] = stoi(tele2db.ReadDB("SELECT ABPAY FROM RUSSIA")[i]);
-		tele2[i].abonpaymin[1] = stoi(tele2db.ReadDB("SELECT MINSAB FROM RUSSIA")[i]);
-		tele2[i].abonpaymin[2] = stoi(tele2db.ReadDB("SELECT FROMAB FROM RUSSIA")[i]);
-	}
+	tele2 = tele2db.getDataTarifs("Tele2");
 	tele2db.~WorkingDB();
 }
 
-BetterTarif searchTarifs::CheckAbonPay(int i, std::vector<dataTarifs> tarifoper)
+BetterTarif searchTarifs::CheckAbonPay(int orderTarif, std::vector<dataTarifs> tarifoper)
 {
 	BetterTarif temple;
-	float tmpprice = 0;
-	std::vector<bool> checkFromAB(4, 0);
-	int fromAB = tarifoper[i].abonpaymin[2];
-	int minsAB = tarifoper[i].abonpaymin[1];
+	float tmpprice = (float)tarifoper[orderTarif].abonpaymin[0];
+	int tmp[4];
+	tmp[0] = mininhmrg; tmp[1] = mininan; tmp[2] = minouthmrg; tmp[3] = minoutan;
+	bool checkFromAB[4] = { 0, 0, 0, 0 };
+	std::vector<int> orders, numbers;
+	std::vector<float> minprice = tarifoper[orderTarif].price;
+	for (int i = 3; i >= 0; i--)
+	{
+		numbers.push_back(i);
+	}
+	while (!minprice.empty())
+	{
+		float low = minprice[0];
+		int num = numbers[0];
+		int count = 0;
+		for (int i = 0; i < (int)minprice.size(); i++)
+		{
+			if (minprice[i] < low)
+			{
+				low = minprice[i];
+				num = numbers[i];
+				count = i;
+			}
+		}
+		orders.push_back(num);
+		numbers.erase(numbers.begin() + count);
+		minprice.erase(minprice.begin() + count);
+	}
+	std::reverse(orders.begin(), orders.end());
+	int fromAB = tarifoper[orderTarif].abonpaymin[2];
+	int minsAB = tarifoper[orderTarif].abonpaymin[1];
 	while (fromAB != 0)
 	{
 		int tmpfromAB = fromAB % 10;
@@ -141,334 +76,222 @@ BetterTarif searchTarifs::CheckAbonPay(int i, std::vector<dataTarifs> tarifoper)
 		}
 		fromAB /= 10;
 	}
-	if (checkFromAB[0])
+	if (checkFromAB[orders.back()])
 	{
-		int tmpmininhmrg = mininhmrg;
-		if (tmpmininhmrg <= minsAB)
+		if (tmp[orders.back()] <= minsAB)
 		{
-			minsAB -= tmpmininhmrg;
-			tmpmininhmrg = 0;
+			minsAB -= tmp[orders.back()];
+			tmp[orders.back()] = 0;
 		}
 		else
 		{
-			tmpmininhmrg -= minsAB;
+			tmp[orders.back()] -= minsAB;
 			minsAB = 0;
-			tmpprice = tmpprice + tmpmininhmrg * tarifoper[i].price[0];
 		}
 	}
-	if (checkFromAB[1])
+	orders.pop_back();
+	if (checkFromAB[orders.back()])
 	{
-		int tmpmininan = mininan;
-		if (tmpmininan <= minsAB)
+		if (tmp[orders.back()] <= minsAB)
 		{
-			minsAB -= tmpmininan;
-			tmpmininan = 0;
+			minsAB -= tmp[orders.back()];
+			tmp[orders.back()] = 0;
 		}
 		else
 		{
-			tmpmininan -= minsAB;
+			tmp[orders.back()] -= minsAB;
 			minsAB = 0;
-			tmpprice = tmpprice + tmpmininan * tarifoper[i].price[1];
 		}
 	}
-	if (checkFromAB[2])
+	orders.pop_back();
+	if (checkFromAB[orders.back()])
 	{
-		int tmpminouthmrg = minouthmrg;
-		if (tmpminouthmrg <= minsAB)
+		if (tmp[orders.back()] <= minsAB)
 		{
-			minsAB -= tmpminouthmrg;
-			tmpminouthmrg = 0;
+			minsAB -= tmp[orders.back()];
+			tmp[orders.back()] = 0;
 		}
 		else
 		{
-			tmpminouthmrg -= minsAB;
+			tmp[orders.back()] -= minsAB;
 			minsAB = 0;
-			tmpprice = tmpprice + tmpminouthmrg * tarifoper[i].price[2];
 		}
 	}
-	if (checkFromAB[3])
+	orders.pop_back();
+	if (checkFromAB[orders.back()])
 	{
-		int tmpminoutan = minoutan;
-		if (tmpminoutan <= minsAB)
+		if (tmp[orders.back()] <= minsAB)
 		{
-			minsAB -= tmpminoutan;
-			tmpminoutan = 0;
+			minsAB -= tmp[orders.back()];
+			tmp[orders.back()] = 0;
 		}
 		else
 		{
-			tmpminoutan -= minsAB;
+			tmp[orders.back()] -= minsAB;
 			minsAB = 0;
-			tmpprice = tmpprice + tmpminoutan * tarifoper[i].price[3];
 		}
 	}
-	if (tmpprice < bestofthebest.price)
-	{
-		temple.id = i;
-		temple.price = tmpprice;
-	}
+	
+
+	orders.pop_back();
+	tmpprice = tmpprice + tmp[0] * tarifoper[orderTarif].price[0] + tmp[1] * tarifoper[orderTarif].price[1] + tmp[2] * tarifoper[orderTarif].price[2] + tmp[3] * tarifoper[orderTarif].price[3];
+	temple.price = tmpprice;
 	return temple;
 }
 
-dataTarifs searchTarifs::SearchBest()
+std::vector<BetterTarif> searchTarifs::formSearchBest(std::vector<dataTarifs> oper, std::vector<BetterTarif> ArrBestTarif)
 {
-	bestofthebest.price = mininhmrg * megafon[0].price[0] + mininan * megafon[0].price[1] + minouthmrg * megafon[0].price[2] + minoutan * megafon[0].price[3];
-	for (int i = 0; i < megafon[0].count; i++)
+	for (int i = 0; i < oper[0].count; i++)
 	{
-		float tmpprice = 0;
-		if ((megafon[i].abonpaymin[0] != 0) && (megafon[i].abonpaymin[0] <= tmpcash))
+		BetterTarif ArrGood;
+		ArrGood.oper = oper[i].nameOper;
+		ArrGood.id = i;
+		ArrGood.nameTarif = oper[i].nameTarif;
+		if (oper[i].abonpaymin[0] != 0)
 		{
-			bestofthebest = CheckAbonPay(i, megafon);
-			bestofthebest.oper = "Megafon";
-			bestofthebest.id = i;
+			ArrGood.price = CheckAbonPay(i, oper).price;
 		}
 		else
 		{
-			if (megafon[i].abonpaymin[0] == 0)
+			ArrGood.price = mininhmrg * oper[i].price[0] + mininan * oper[i].price[1] + minouthmrg * oper[i].price[2] + minoutan * oper[i].price[3];
+		}
+		ArrRates.push_back(ArrGood);
+		float tmpprice = 0;
+		if (oper[i].abonpaymin[0] != 0)
+		{
+			if (CheckAbonPay(i, oper).price <= ArrBestTarif.back().price)
 			{
-				tmpprice = mininhmrg * megafon[i].price[0] + mininan * megafon[i].price[1] + minouthmrg * megafon[i].price[2] + minoutan * megafon[i].price[3];
-				if ((tmpprice < bestofthebest.price) && (tmpprice <= tmpcash))
+				if (CheckAbonPay(i, oper).price < ArrBestTarif.back().price)
 				{
-					bestofthebest.id = i;
-					bestofthebest.price = tmpprice;
-					bestofthebest.oper = "Megafon";
+					ArrBestTarif.clear();
+				}
+				BetterTarif theBest;
+				theBest.price = CheckAbonPay(i, oper).price;
+				theBest.oper = oper[0].nameOper;
+				theBest.id = i;
+				ArrBestTarif.push_back(theBest);
+			}
+		}
+		else
+		{
+			if (oper[i].abonpaymin[0] == 0)
+			{
+				tmpprice = mininhmrg * oper[i].price[0] + mininan * oper[i].price[1] + minouthmrg * oper[i].price[2] + minoutan * oper[i].price[3];
+				if (tmpprice <= ArrBestTarif.back().price)
+				{
+					if (tmpprice < ArrBestTarif.back().price)
+					{
+						ArrBestTarif.clear();
+					}
+					BetterTarif theBest;
+					theBest.price = tmpprice;
+					theBest.oper = oper[i].nameOper;
+					theBest.id = i;
+					ArrBestTarif.push_back(theBest);
 				}
 			}
 		}
 	}
-	for (int i = 0; i < beeline[0].count; i++)
+	return ArrBestTarif;
+}
+
+std::vector<dataTarifs> searchTarifs::SearchBest()
+{
+	std::vector<BetterTarif> ArrBestTarif;
+	BetterTarif theBest;
+	int z = 0;
+	do
 	{
-		float tmpprice = 0;
-		if ((beeline[i].abonpaymin[0] != 0) && (beeline[i].abonpaymin[0] <= tmpcash))
+		theBest.price = mininhmrg * megafon[z].price[0] + mininan * megafon[z].price[1] + minouthmrg * megafon[z].price[2] + minoutan * megafon[z].price[3];
+		theBest.oper = "Not Found";
+		theBest.id = z;
+		z++;
+	} while (megafon[z].abonpaymin[0] != 0);
+    ArrBestTarif.push_back(theBest);
+	ArrBestTarif = formSearchBest(megafon, ArrBestTarif);
+	ArrBestTarif = formSearchBest(beeline, ArrBestTarif);
+	ArrBestTarif = formSearchBest(mts, ArrBestTarif);
+	ArrBestTarif = formSearchBest(tele2, ArrBestTarif);
+	std::vector<dataTarifs> listBest;
+	if (ArrBestTarif.back().oper == "Megafon")
+	{
+		loading();
+		while (!ArrBestTarif.empty())
 		{
-			bestofthebest = CheckAbonPay(i, beeline);
-			bestofthebest.oper = "Beeline";
-			bestofthebest.id = i;
+			listBest.push_back(megafon[ArrBestTarif.back().id]);
+			ArrBestTarif.pop_back();
 		}
-		else
+		return listBest;
+	}
+	if (ArrBestTarif.back().oper == "Beeline")
+	{
+		loading();
+		while (!ArrBestTarif.empty())
 		{
-			if (beeline[i].abonpaymin[0] == 0)
-			{
-				tmpprice = mininhmrg * beeline[i].price[0] + mininan * beeline[i].price[1] + minouthmrg * beeline[i].price[2] + minoutan * beeline[i].price[3];
-				if ((tmpprice < bestofthebest.price) && (tmpprice <= tmpcash))
-				{
-					bestofthebest.id = i;
-					bestofthebest.price = tmpprice;
-					bestofthebest.oper = "Beeline";
-				}
-			}
+			listBest.push_back(beeline[ArrBestTarif.back().id]);
+			ArrBestTarif.pop_back();
 		}
+		return listBest;
 	}
-	for (int i = 0; i < mts[0].count; i++)
+	if (ArrBestTarif.back().oper == "Mts")
 	{
-		float tmpprice = 0;
-		if ((mts[i].abonpaymin[0] != 0) && (mts[i].abonpaymin[0] <= tmpcash))
+		loading();
+		while (!ArrBestTarif.empty())
 		{
-			bestofthebest = CheckAbonPay(i, mts);
-			bestofthebest.oper = "Mts";
-			bestofthebest.id = i;
+			listBest.push_back(mts[ArrBestTarif.back().id]);
+			ArrBestTarif.pop_back();
 		}
-		else
+		return listBest;
+	}
+	if (ArrBestTarif.back().oper == "Tele2")
+	{
+		loading();
+		while (!ArrBestTarif.empty())
 		{
-			if (mts[i].abonpaymin[0] == 0)
-			{
-				tmpprice = mininhmrg * mts[i].price[0] + mininan * mts[i].price[1] + minouthmrg * mts[i].price[2] + minoutan * mts[i].price[3];
-				if ((tmpprice < bestofthebest.price) && (tmpprice <= tmpcash))
-				{
-					bestofthebest.id = i;
-					bestofthebest.price = tmpprice;
-					bestofthebest.oper = "Mts";
-				}
-			}
+			listBest.push_back(tele2[ArrBestTarif.back().id]);
+			ArrBestTarif.pop_back();
 		}
-	}
-	for (int i = 0; i < tele2[0].count; i++)
-	{
-		float tmpprice = 0;
-		if ((tele2[i].abonpaymin[0] != 0) && (tele2[i].abonpaymin[0] <= tmpcash))
-		{
-			bestofthebest = CheckAbonPay(i, tele2);
-			bestofthebest.oper = "Tele2";
-			bestofthebest.id = i;
-		}
-		else
-		{
-			if (tele2[i].abonpaymin[0] == 0)
-			{
-				tmpprice = mininhmrg * tele2[i].price[0] + mininan * tele2[i].price[1] + minouthmrg * tele2[i].price[2] + minoutan * tele2[i].price[3];
-				if ((tmpprice < bestofthebest.price) && (tmpprice <= tmpcash))
-				{
-					bestofthebest.id = i;
-					bestofthebest.price = tmpprice;
-					bestofthebest.oper = "Tele2";
-				}
-			}
-		}
-	}
-	if (bestofthebest.oper == "Megafon")
-	{
-		std::cout << "œÓ‰ÓÊ‰ËÚÂ, Ë‰ÂÚ Ó·‡·ÓÚÍ‡ ‰‡ÌÌ˚ı";
-		Sleep(3000);
-		std::cout << ".";
-		Sleep(3000);
-		std::cout << ".";
-		Sleep(3000);
-		std::cout << "." << std::endl;
-		megafon[bestofthebest.id].nameTarif.append(" Megafon");
-		return megafon[bestofthebest.id];
-	}
-	if (bestofthebest.oper == "Beeline")
-	{
-		std::cout << "œÓ‰ÓÊ‰ËÚÂ, Ë‰ÂÚ Ó·‡·ÓÚÍ‡ ‰‡ÌÌ˚ı";
-		Sleep(3000);
-		std::cout << ".";
-		Sleep(3000);
-		std::cout << ".";
-		Sleep(3000);
-		std::cout << "." << std::endl;
-		beeline[bestofthebest.id].nameTarif.append(" Beeline");
-		return beeline[bestofthebest.id];
-	}
-	if (bestofthebest.oper == "Mts")
-	{
-		std::cout << "œÓ‰ÓÊ‰ËÚÂ, Ë‰ÂÚ Ó·‡·ÓÚÍ‡ ‰‡ÌÌ˚ı";
-		Sleep(3000);
-		std::cout << ".";
-		Sleep(3000);
-		std::cout << ".";
-		Sleep(3000);
-		std::cout << "." << std::endl;
-		mts[bestofthebest.id].nameTarif.append(" MTS");
-		return mts[bestofthebest.id];
-	}
-	if (bestofthebest.oper == "Tele2")
-	{
-		std::cout << "œÓ‰ÓÊ‰ËÚÂ, Ë‰ÂÚ Ó·‡·ÓÚÍ‡ ‰‡ÌÌ˚ı";
-		Sleep(3000);
-		std::cout << ".";
-		Sleep(3000);
-		std::cout << ".";
-		Sleep(3000);
-		std::cout << "." << std::endl;
-		tele2[bestofthebest.id].nameTarif.append(" Tele2");
-		return tele2[bestofthebest.id];
+		return listBest;
 	}
 	else
 	{
-		std::cout << "—˝, ÔÓÔÓ·ÛÈÚÂ ‚‚ÂÒÚË ‰Û„ËÂ ‰‡ÌÌ˚Â" << std::endl;
-		return tele2[bestofthebest.id];
+		std::cout << "–°—ç—Ä, –ø–æ –≤–∞—à–∏–º —Ç—Ä–µ–±–æ–≤–∞–Ω–∏—è–º –Ω–∏—á–µ–≥–æ –Ω–µ –Ω–∞–π–¥–µ–Ω–æ. –ü–æ–ø—Ä–æ–±—É–π—Ç–µ –≤–≤–µ—Å—Ç–∏ –¥—Ä—É–≥–∏–µ –¥–∞–Ω–Ω—ã–µ" << std::endl;
+		return listBest;
 	}
 }
 
-void searchTarifs::SearchGood()
+void searchTarifs::writeRates(int count)
 {
-	if (bestofthebest.price == 0)
+    for (int i = 0; i < (int)ArrRates.size(); i++)
 	{
-		std::cout << "Õ‡È‰ËÚÂ ÒÌ‡˜‡ÎÓ ÎÛ˜¯ËÈ Ú‡ËÙ, ‡ ÔÓÚÓÏ ÔË·ÎËÊÂÌÌ˚Â" << std::endl;
-	}
-	BetterTarif tmpgoodtarif;
-	bestofthebest.price = bestofthebest.price + bestofthebest.price * 0,3;
-	for (int i = 0; i < megafon[0].count; i++)
-	{
-		float tmpprice = 0;
-		if ((megafon[i].abonpaymin[0] != 0) && (megafon[i].abonpaymin[0] <= (tmpcash + tmpcash*0.3)))
+		for (int j = 1; j < (int)ArrRates.size(); j++)
 		{
-			tmpgoodtarif = CheckAbonPay(i, megafon);
-			tmpgoodtarif.oper = "Megafon";
-			ArrGoodTarif.push_back(tmpgoodtarif);
-		}
-		else
-		{
-			if (megafon[i].abonpaymin[0] == 0)
-			{
-				tmpprice = mininhmrg * megafon[i].price[0] + mininan * megafon[i].price[1] + minouthmrg * megafon[i].price[2] + minoutan * megafon[i].price[3];
-				if ((tmpprice < bestofthebest.price) && (tmpprice <= (tmpcash + tmpcash*0.3)))
-				{
-					tmpgoodtarif.id = i;
-					tmpgoodtarif.price = tmpprice;
-					tmpgoodtarif.oper = "Megafon";
-					ArrGoodTarif.push_back(tmpgoodtarif);
-				}
-			}
+			std::sort(ArrRates.begin(), ArrRates.end(), [](BetterTarif const &a, BetterTarif const &b) {return a.price > b.price; });
 		}
 	}
-	for (int i = 0; i < beeline[0].count; i++)
+	if (count >= (int)ArrRates.size())
 	{
-		float tmpprice = 0;
-		if ((beeline[i].abonpaymin[0] != 0) && (beeline[i].abonpaymin[0] <= (tmpcash + tmpcash*0.3)))
+		std::cout << "–ö —Å–æ–∂–∞–ª–µ–Ω–∏—é —Ç–∞–∫–æ–≥–æ –±–æ–ª—å—à–æ–≥–æ –∫–æ–ª–∏—á–µ—Å—Ç–≤–∞ —Ç–∞—Ä–∏—Ñ–æ–≤ –Ω–µ—Ç—É –≤ –Ω–∞—à–µ–π –±–∞–∑–µ –¥–∞–Ω–Ω—ã—Ö (–º–∞–∫—Å–∏–º–∞–ª—å–Ω–æ: " << ArrRates.size() << ").\n–ü–æ–ø—Ä–æ–±—É–π—Ç–µ –≤–≤–µ—Å—Ç–∏ –¥—Ä—É–≥–æ–µ –∫–æ–ª–∏—á–µ—Ç—Å–æ–≤" << std::endl;
+		std::cin >> count;
+		if ((std::cin.fail()) || (count <= 0) || (count > (int)ArrRates.size()))
 		{
-			tmpgoodtarif = CheckAbonPay(i, beeline);
-			tmpgoodtarif.oper = "Beeline";
-			ArrGoodTarif.push_back(tmpgoodtarif);
-		}
-		else
-		{
-			if ((beeline[i].abonpaymin[0] == 0) && (tmpcash + tmpcash*0.3))
-			{
-				tmpprice = mininhmrg * beeline[i].price[0] + mininan * beeline[i].price[1] + minouthmrg * beeline[i].price[2] + minoutan * beeline[i].price[3];
-				if (tmpprice < bestofthebest.price)
-				{
-					tmpgoodtarif.id = i;
-					tmpgoodtarif.price = tmpprice;
-					tmpgoodtarif.oper = "Beeline";
-					ArrGoodTarif.push_back(tmpgoodtarif);
-				}
-			}
+			std::cout << "–ù–µ–∫–æ—Ä—Ä–µ–∫—Ç–Ω—ã–π –≤–≤–æ–¥!" << std::endl;
+			std::exit(1);
 		}
 	}
-	for (int i = 0; i < mts[0].count; i++)
+	std::cout << "–†–µ–π—Ç–∏–Ω–≥ <<TOP-" << count << ">> —Ç–∞—Ä–∏—Ñ–æ–≤ –ø–æ –≤–∞—à–µ–º—É –∑–∞–ø—Ä–æ—Å—É:\n" << std::endl;
+	for (int i = 0; i < count; i++)
 	{
-		float tmpprice = 0;
-		if ((mts[i].abonpaymin[0] != 0) && (mts[i].abonpaymin[0] <= (tmpcash + tmpcash*0.3)))
-		{
-			tmpgoodtarif = CheckAbonPay(i, mts);
-			tmpgoodtarif.oper = "Mts";
-			ArrGoodTarif.push_back(tmpgoodtarif);
-		}
-		else
-		{
-			if ((mts[i].abonpaymin[0] == 0) && (tmpcash + tmpcash*0.3))
-			{
-				tmpprice = mininhmrg * mts[i].price[0] + mininan * mts[i].price[1] + minouthmrg * mts[i].price[2] + minoutan * mts[i].price[3];
-				if (tmpprice < bestofthebest.price)
-				{
-					tmpgoodtarif.id = i;
-					tmpgoodtarif.price = tmpprice;
-					tmpgoodtarif.oper = "Mts";
-					ArrGoodTarif.push_back(tmpgoodtarif);
-				}
-			}
-		}
+		std::cout << (i + 1) << ". " << ArrRates.back().oper << ": " << ArrRates.back().nameTarif << " : –†–∞—Å—Ö–æ–¥ (–≤ —Ä—É–±.) - " << ArrRates.back().price << std::endl;
+		ArrRates.pop_back();
 	}
-	for (int i = 0; i < tele2[0].count; i++)
-	{
-		float tmpprice = 0;
-		if ((tele2[i].abonpaymin[0] != 0) && (tele2[i].abonpaymin[0] <= (tmpcash + tmpcash*0.3)))
-		{
-			tmpgoodtarif = CheckAbonPay(i, tele2);
-			tmpgoodtarif.oper = "Tele2";
-			ArrGoodTarif.push_back(tmpgoodtarif);
-		}
-		else
-		{
-			if (tele2[i].abonpaymin[0] == 0)
-			{
-				tmpprice = mininhmrg * tele2[i].price[0] + mininan * tele2[i].price[1] + minouthmrg * tele2[i].price[2] + minoutan * tele2[i].price[3];
-				if ((tmpprice < bestofthebest.price) && (tmpcash + tmpcash*0.3))
-				{
-					tmpgoodtarif.id = i;
-					tmpgoodtarif.price = tmpprice;
-					tmpgoodtarif.oper = "Tele2";
-					ArrGoodTarif.push_back(tmpgoodtarif);
-				}
-			}
-		}
-	}
+	return;
 }
 
 searchTarifs::~searchTarifs()
 {
-	megafon.clear();
-	beeline.clear();
-	mts.clear();
-	tele2.clear();
+	megafon.~vector();
+	beeline.~vector();
+	mts.~vector();
+	tele2.~vector();
 }
