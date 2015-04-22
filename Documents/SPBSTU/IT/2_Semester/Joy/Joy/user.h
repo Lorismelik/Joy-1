@@ -14,4 +14,3 @@ private:
 	int calls, mins, wherever;
 	std::string oper;
 };
-
