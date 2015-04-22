@@ -59,6 +59,38 @@ int WorkingDB::countTable()
 	int count = stoi(data.values.back());
 	return count;
 }
+
+std::vector<dataTarifs> WorkingDB::getDataTarifs(std::string oper) 
+{
+	std::vector<dataTarifs> strTarif;
+	strTarif.resize(countTable());
+	strTarif[0].count = countTable();
+	for (int i = 0; i < strTarif[0].count; i++)
+	{
+        strTarif[i].nameOper = oper;
+		strTarif[i].price.resize(4);
+		strTarif[i].abonpaymin.resize(3);
+		strTarif[i].nameTarif = ReadDB("SELECT TARIF FROM NAME")[i];
+		std::string s;
+		s = ReadDB("SELECT INHMRG FROM RUSSIA")[i];
+		std::replace(s.begin(), s.end(), '.', ',');
+		strTarif[i].price[0] = (float)atof(s.c_str());
+		s = ReadDB("SELECT INAN FROM RUSSIA")[i];
+		std::replace(s.begin(), s.end(), '.', ',');
+		strTarif[i].price[1] = (float)atof(s.c_str());
+		s = ReadDB("SELECT OUTHMRG FROM RUSSIA")[i];
+		std::replace(s.begin(), s.end(), '.', ',');
+		strTarif[i].price[2] = (float)atof(s.c_str());
+		s = ReadDB("SELECT OUTAN FROM RUSSIA")[i];
+		std::replace(s.begin(), s.end(), '.', ',');
+		strTarif[i].price[3] = (float)atof(s.c_str());
+		strTarif[i].abonpaymin[0] = stoi(ReadDB("SELECT ABPAY FROM RUSSIA")[i]);
+		strTarif[i].abonpaymin[1] = stoi(ReadDB("SELECT MINSAB FROM RUSSIA")[i]);
+		strTarif[i].abonpaymin[2] = stoi(ReadDB("SELECT FROMAB FROM RUSSIA")[i]);
+	}
+	return strTarif;
+}
+
 WorkingDB::~WorkingDB()
 {
 	sqlite3_close(db);

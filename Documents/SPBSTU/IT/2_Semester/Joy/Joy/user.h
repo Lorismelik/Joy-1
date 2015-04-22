@@ -9,9 +9,9 @@ class user
 {
 public:
 	user();
-	~user();
-	std::string getnameBest();
+	void getnameBest();
 private:
-	int cash, calls, mins, wherever;
+	int calls, mins, wherever;
+	std::string oper;
 };
 
